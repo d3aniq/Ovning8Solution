@@ -55,15 +55,15 @@ namespace Movie.Data
 
             //base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Actor>().HasData(
-            //    new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
-            //    new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
-            //);
+            modelBuilder.Entity<Actor>().HasData(
+                new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
+                new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
+            );
 
-            //modelBuilder.Entity<Genre>().HasData(
-            //    new Genre { Id = 1, Name = "Drama" },
-            //    new Genre { Id = 2, Name = "Comedy" }
-            //);
+            modelBuilder.Entity<Genre>().HasData(
+                new Genre { Id = 1, Name = "Drama" },
+                new Genre { Id = 2, Name = "Comedy" }
+            );
         }
     }
 }
