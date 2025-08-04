@@ -12,5 +12,12 @@ namespace Movie.Core.Entities
         public decimal Budget { get; set; }
         public int MovieId { get; set; }
         public VideoMovie? Movie { get; set; }
+
+        //public string Title { get; set; }
+        public DateTime ReleaseDate { get; set; }
+        public int GenreId { get; set; } // Foreign key till Genre
+
+        public Genre Genre { get; set; }
+
     }
 }

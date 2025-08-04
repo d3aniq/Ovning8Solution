@@ -1,37 +1,28 @@
-using AutoMapper;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Movie.Data.Extensions;
-using Movie.Data.Mapping;
-using Movie.Service.Contracts;
-using Movie.Services;
+using Microsoft.EntityFrameworkCore;
+using Movie.Data;
+using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(); // Enable JSON Patch support
+// Lägg till DbContext med connection string från appsettings.json
+builder.Services.AddDbContext<MovieContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register AutoMapper and our profile
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+// Lägg till kontroller
+builder.Services.AddControllers();
 
-// Register the data access layer (DbContext + UnitOfWork)
-builder.Services.AddDataAccess(builder.Configuration);
-
-// Register the service layer
-builder.Services.AddScoped<IServiceManager, ServiceManager>();
+// Lägg till swagger (om du använder det)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-//app.UseHttpsRedirection();
-app.UseRouting();
 
 app.UseAuthorization();
 

@@ -3,27 +3,36 @@ using Movie.Core.Entities;
 
 namespace Movie.Data
 {
-    /// <summary>
-    /// Entity Framework Core database context used for persisting movie data.
-    /// </summary>
     public class MovieContext : DbContext
     {
         public MovieContext(DbContextOptions<MovieContext> options) : base(options)
         {
         }
 
-        public DbSet<VideoMovie> Movies { get; set; } = null!;
-        public DbSet<Actor> Actors { get; set; } = null!;
-        public DbSet<Review> Reviews { get; set; } = null!;
-        public DbSet<MovieDetails> MovieDetails { get; set; } = null!;
-        public DbSet<MovieActor> MovieActors { get; set; } = null!;
-        public DbSet<Genre> Genres { get; set; } = null!;
+        // Fallback-konstruktor för design-time (t.ex. migrationer)
+        public MovieContext()
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Fallback-anslutning används vid migration om ingen DI är konfigurerad
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MovieDb;Trusted_Connection=True;");
+            }
+        }
+
+        public DbSet<VideoMovie> Movies { get; set; }
+        public DbSet<Actor> Actors { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<MovieActor> MovieActors { get; set; }
+        public DbSet<MovieDetails> MovieDetails { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure many‑to‑many join table
             modelBuilder.Entity<MovieActor>()
                 .HasKey(ma => new { ma.MovieId, ma.ActorId });
 
@@ -32,29 +41,29 @@ namespace Movie.Data
                 .WithMany(m => m.MovieActors)
                 .HasForeignKey(ma => ma.MovieId);
 
+            modelBuilder.Entity<MovieDetails>()
+                .HasOne(md => md.Genre)
+                .WithMany()
+                .HasForeignKey(md => md.GenreId)
+                .OnDelete(DeleteBehavior.Restrict); // eller .NoAction
+
+
             modelBuilder.Entity<MovieActor>()
                 .HasOne(ma => ma.Actor)
                 .WithMany(a => a.MovieActors)
                 .HasForeignKey(ma => ma.ActorId);
 
-            // Configure one‑to‑one relationship between Movie and MovieDetails
-            modelBuilder.Entity<VideoMovie>()
-                .HasOne(m => m.MovieDetails)
-                .WithOne(md => md.Movie)
-                .HasForeignKey<MovieDetails>(md => md.MovieId);
+            //base.OnModelCreating(modelBuilder);
 
-            // Configure one‑to‑many between Genre and Movie
-            modelBuilder.Entity<VideoMovie>()
-                .HasOne(m => m.Genre)
-                .WithMany(g => g.Movies)
-                .HasForeignKey(m => m.GenreId);
+            //modelBuilder.Entity<Actor>().HasData(
+            //    new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
+            //    new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
+            //);
 
-            // Seed some genres to fulfil the normalisation requirement
-            modelBuilder.Entity<Genre>().HasData(
-                new Genre { Id = 1, Name = "Documentary" },
-                new Genre { Id = 2, Name = "Action" },
-                new Genre { Id = 3, Name = "Drama" }
-            );
+            //modelBuilder.Entity<Genre>().HasData(
+            //    new Genre { Id = 1, Name = "Drama" },
+            //    new Genre { Id = 2, Name = "Comedy" }
+            //);
         }
     }
 }
