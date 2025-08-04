@@ -18,6 +18,7 @@ namespace Movie.Tests
         [Fact]
         public async Task AddReviewAsync_ShouldThrow_WhenMoreThanTenReviews()
         {
+            var dummy = typeof(AutoMapper.MapperConfiguration);
             var options = new DbContextOptionsBuilder<MovieContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
@@ -32,7 +33,7 @@ namespace Movie.Tests
             // Add 10 reviews
             for (int i = 0; i < 10; i++)
             {
-                unitOfWork.Reviews.Add(new Review { MovieId = movie.Id, Comment = $"Review{i}", Rating = 5 });
+                unitOfWork.Reviews.Add(new Review { MovieId = movie.Id, Comment = $"Review{i}", Rating = 5, ReviewerName = $"User{i}"});
             }
             await unitOfWork.CompleteAsync();
             // Act & Assert

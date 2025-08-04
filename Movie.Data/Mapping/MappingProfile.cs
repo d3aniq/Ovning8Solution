@@ -11,6 +11,9 @@ namespace Movie.Data.Mapping
     {
         public MappingProfile()
         {
+
+
+
             CreateMap<VideoMovie, MovieDto>()
                 .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre != null ? src.Genre.Name : null));
             CreateMap<VideoMovie, MovieDetailDto>()
@@ -21,7 +24,12 @@ namespace Movie.Data.Mapping
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Comment));
 
             // Reverse mappings for updates/creates
-            CreateMap<MovieDto, VideoMovie>();
+            //CreateMap<MovieDto, VideoMovie>();
+            //CreateMap<MovieDto, VideoMovie>()
+              //  .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => new Genre { Name = src.Genre }));
+            CreateMap<MovieDto, VideoMovie>()
+                .ForMember(dest => dest.Genre, opt => opt.Ignore());
+
             CreateMap<MovieDetailsDto, MovieDetails>();
         }
     }

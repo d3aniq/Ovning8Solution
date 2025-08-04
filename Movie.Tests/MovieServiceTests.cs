@@ -13,6 +13,27 @@ using Xunit;
 
 namespace Movie.Tests
 {
+
+    public class AutoMapperReference
+    {
+        // Detta tvingar in AutoMapper i .deps.json
+        private readonly System.Type _ = typeof(AutoMapper.Profile);
+    }
+
+    public class AutoMapperReferenceLoader
+    {
+        private readonly Type _ = typeof(AutoMapper.Profile);
+    }
+
+
+    public class DummyReference
+    {
+        private readonly Type _ = typeof(MapperConfiguration);
+    }
+
+
+    
+
     public class MovieServiceTests
     {
         [Fact]
@@ -26,10 +47,29 @@ namespace Movie.Tests
             var unitOfWork = new UnitOfWork(context);
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
             var service = new MovieService(unitOfWork, mapper);
-            // Seed existing movie
-            unitOfWork.Movies.Add(new VideoMovie { Title = "Duplicate", ReleaseYear = 2020, Duration = 100, GenreId = 1 });
+
+            // Lägg till genre
+            unitOfWork.Genres.Add(new Genre { Id = 1, Name = "Action" });
             await unitOfWork.CompleteAsync();
-            var dto = new MovieDto { Title = "Duplicate", ReleaseYear = 2021, Duration = 120, Genre = "Action" };
+
+            // Seed existing movie
+            unitOfWork.Movies.Add(new VideoMovie
+            {
+                Title = "Duplicate",
+                ReleaseYear = 2020,
+                Duration = 100,
+                GenreId = 1
+            });
+            await unitOfWork.CompleteAsync();
+
+            var dto = new MovieDto
+            {
+                Title = "Duplicate",
+                ReleaseYear = 2021,
+                Duration = 120,
+                Genre = "Action"
+            };
+
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => service.CreateMovieAsync(dto));
         }
@@ -45,18 +85,29 @@ namespace Movie.Tests
             var unitOfWork = new UnitOfWork(context);
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
             var service = new MovieService(unitOfWork, mapper);
-            // Seed more than 100 movies
+
+            // Lägg till genre som alla filmer ska använda
+            unitOfWork.Genres.Add(new Genre { Id = 1, Name = "Action" });
+            await unitOfWork.CompleteAsync();
+
+            // Seed mer än 100 filmer
             for (int i = 0; i < 150; i++)
             {
-                unitOfWork.Movies.Add(new VideoMovie { Title = $"Movie{i}", ReleaseYear = 2000 + i, Duration = 90, GenreId = 1 });
+                unitOfWork.Movies.Add(new VideoMovie
+                {
+                    Title = $"Movie{i}",
+                    ReleaseYear = 2000 + i,
+                    Duration = 90,
+                    GenreId = 1
+                });
             }
             await unitOfWork.CompleteAsync();
+
             // Act
             var result = await service.GetMoviesAsync(1, 110);
+
             // Assert
             Assert.Equal(100, result.Items.Count());
-
-
         }
 
         [Fact]
@@ -73,4 +124,6 @@ namespace Movie.Tests
             Assert.False(result);
         }
     }
+
+
 }
