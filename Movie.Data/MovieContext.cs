@@ -72,10 +72,10 @@ namespace Movie.Data
                 new Review { Id = 2, MovieId = 2, ReviewerName = "Bob", Comment = "Funny but shallow", Rating = 3 }
             );
 
-            //modelBuilder.Entity<Actor>().HasData(
-            //    new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
-            //    new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
-            //);
+            modelBuilder.Entity<Actor>().HasData(
+                new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
+                new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
+            );
 
             //modelBuilder.Entity<Genre>().HasData(
             //    new Genre { Id = 1, Name = "Drama" },
