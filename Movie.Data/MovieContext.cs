@@ -55,15 +55,32 @@ namespace Movie.Data
 
             //base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Actor>().HasData(
-                new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
-                new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
+            modelBuilder.Entity<Genre>().HasData(
+        new Genre { Id = 1, Name = "Action" },
+        new Genre { Id = 2, Name = "Comedy" },
+        new Genre { Id = 3, Name = "Drama" }
+    );
+
+
+            modelBuilder.Entity<VideoMovie>().HasData(
+       new VideoMovie { Id = 1, Title = "Fast & Curious", ReleaseYear = 2020, Duration = 120, GenreId = 1 },
+       new VideoMovie { Id = 2, Title = "Laugh Factory", ReleaseYear = 2019, Duration = 95, GenreId = 2 }
+   );
+
+            modelBuilder.Entity<Review>().HasData(
+                new Review { Id = 1, MovieId = 1, ReviewerName = "Alice", Comment = "Loved it", Rating = 5 },
+                new Review { Id = 2, MovieId = 2, ReviewerName = "Bob", Comment = "Funny but shallow", Rating = 3 }
             );
 
-            modelBuilder.Entity<Genre>().HasData(
-                new Genre { Id = 1, Name = "Drama" },
-                new Genre { Id = 2, Name = "Comedy" }
-            );
+            //modelBuilder.Entity<Actor>().HasData(
+            //    new Actor { Id = 1, Name = "Tom Hanks", BirthYear = 1956 },
+            //    new Actor { Id = 2, Name = "Meryl Streep", BirthYear = 1949 }
+            //);
+
+            //modelBuilder.Entity<Genre>().HasData(
+            //    new Genre { Id = 1, Name = "Drama" },
+            //    new Genre { Id = 2, Name = "Comedy" }
+            //);
         }
     }
 }
